@@ -7,6 +7,7 @@ app                 = express();
 // APP CONFIG
 mongoose.connect("mongodb://localhost:27017/blog_app", { useNewUrlParser: true, useUnifiedTopology: true });
 app.set("view engine", "ejs");
+mongoose.set("useFindAndModify", false);
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
@@ -90,8 +91,19 @@ app.put("/blogs/:id", function(req, res){
             res.redirect("/blogs/" + req.params.id);
         }
     })
-})
+});
 // DELETE ROUTE
+app.delete("/blogs/:id", function(req, res){
+    // destroy blog
+    Blog.findByIdAndRemove(req.params.id, function(err){
+        if(err){
+            res.redirect("/blogs");
+        } else {
+            res.redirect("/blogs");
+        }
+    })
+    // redirect somewhere
+})
 const port = process.env.PORT || 3000
 app.listen(port, function() {
     console.log("The Blog App Server Has Started!")
